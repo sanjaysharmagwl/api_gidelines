@@ -1,0 +1,233 @@
+
+openapi: 3.0.3
+
+info:
+  title: "Airflow API (Stable)"
+  description: hello
+  version: '1.0.0'
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  contact:
+    name: Apache Software Foundation
+
+servers:
+  - url: /api/v1
+    description: Apache Stable API.
+
+paths:
+  # Database entities
+  /Person:
+    get:
+      summary: List connections
+      x-openapi-router-controller: api.resources.v1.people
+      operationId: read_all
+      tags: [Person]
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PersonCollection'
+    post:
+      summary: Create a connection
+      x-openapi-router-controller: ..api.resources.v1.people
+      operationId: create
+      tags: [Person]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+
+  /Person/{person_id}:
+    parameters:
+      - $ref: '#/components/parameters/PersonID'
+    get:
+      summary: Get a connection
+      x-openapi-router-controller: ..api.resources.v1.people
+      operationId: read_one
+      tags: [Person]
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/PermissionDenied'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      summary: Update a connection
+      x-openapi-router-controller: ..api.resources.v1.people
+      operationId: update
+      tags: [Person]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/PermissionDenied'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Delete a connection
+      x-openapi-router-controller: ..api.resources.v1.people
+      operationId: delete
+      tags: [Person]
+      responses:
+        '204':
+          description: Success.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/PermissionDenied'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
+components:
+  # Reusable schemas (data models)
+  schemas:
+    # Database entities
+    PersonCollectionItem:
+      type: object
+      properties:
+        person_id:
+          type: string
+        fname:
+          type: string
+        lname:
+          type: string
+        timestamp:
+          type: string
+
+    PersonCollection:
+      type: object
+      description: Connections
+      properties:
+        persons:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonCollectionItem'
+    Person:
+      type: object
+      properties:
+        person:
+          $ref: '#/components/schemas/PersonCollectionItem'
+
+
+  # Reusable path, query, header and cookie parameters
+  parameters:
+
+# Database entity fields
+    PersonID:
+      in: path
+      name: person_id
+      schema:
+        type: string
+      required: true
+
+
+  # Reusable request bodies
+  requestBodies: {}
+
+  # Reusable responses, such as 401 Unauthenticated or 400 Bad Request
+  responses:
+    # 400
+    'BadRequest':
+      description: Client specified an invalid argument.
+      content: {}
+
+# 401
+    'Unauthenticated':
+      description: Request not authenticated due to missing, invalid, authentication info.
+      content: {}
+
+  # 403
+    'PermissionDenied':
+      description: Client does not have sufficient permission.
+      content: {}
+
+  # 404
+    'NotFound':
+      description: A specified resource is not found.
+      content: {}
+
+# 405
+    'MethodNotAllowed':
+      description: Request method is known by the server but is not supported by the target resource.
+      content: {}
+
+# 406
+    'NotAcceptable':
+      description: A specified Accept header is not allowed.
+      content: {}
+
+# 409
+    'AlreadyExists':
+      description: The resource that a client tried to create already exists.
+      content: {}
+
+# 500
+    'Unknown':
+      description: Unknown server error.
+      content: {}
+
+
+  # Reusable response headers
+  headers: {}
+
+  # Reusable examples
+  examples: {}
+
+  # Reusable links
+  links: {}
+
+  # Reusable callbacks
+  callbacks: {}
+  
+# The API will provide support for plugins to support various authorization mechanisms.
+# Detailed information will be available in the plugin specification.
+security: []
+
+tags:
+  - name: Person
+  - name: Note
+  
+
+
+externalDocs:
+  url: https://example.com
